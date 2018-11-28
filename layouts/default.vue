@@ -1,8 +1,11 @@
-<template>
-  <div>
+<template style="width: 100%;height: 100%;">
+  <div v-if="(!(/sign/g).test($route.path))">
     <Header/>
     <Section/>
     <Footer/>
+  </div>
+  <div style="width: 100%;height: 100%;" v-else>
+    <nuxt/>
   </div>
 </template>
 
@@ -20,7 +23,7 @@
 </script>
 
 <style>
-html {
+html, body {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
   font-size: 16px;
@@ -30,6 +33,8 @@ html {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  width: 100%;
+  height: 100%;
 }
 
 *,
@@ -67,4 +72,10 @@ html {
   color: #fff;
   background-color: #35495e;
 }
+
+  #__nuxt, #__layout {
+    width: 100%;
+    height: 100%;
+  }
+
 </style>

@@ -34,7 +34,8 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    '@/plugins/element-ui'
+    '@/plugins/element-ui',
+    '@/plugins/axios'
   ],
 
   /*
@@ -42,13 +43,19 @@ module.exports = {
   */
   modules: [
     // Doc: https://github.com/nuxt-community/axios-module#usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/proxy'
   ],
   /*
   ** Axios module configuration
   */
   axios: {
+    proxy: true,
     // See https://github.com/nuxt-community/axios-module#options
+    '/api/': {
+      target: 'https://nb.nbcolt.com:20059/oitUct/management',
+      pathRewrite: { '^/api/': '' }
+    }
   },
 
   /*
@@ -69,5 +76,12 @@ module.exports = {
     //     })
     //   }
     // }
+  },
+  proxy: {
+    // See https://github.com/nuxt-community/axios-module#options
+    '/api/': {
+      target: 'https://nb.nbcolt.com:20059/oitUct/management',
+      pathRewrite: { '^/api/': '' }
+    }
   }
 }

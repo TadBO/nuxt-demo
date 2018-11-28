@@ -43,6 +43,7 @@
     <!--表格部分-->
     <el-table
       :data="tableData"
+      v-loading="loading"
       border
       style="width: 100%">
       <el-table-column
@@ -50,68 +51,86 @@
         align="center"
         label="序号"
         width="50">
+        <template slot-scope="scope">
+          {{ scope.$index+1 }}
+        </template>
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="enterprisesCode"
         align="center"
         label="统一代码">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="enterprisesContacts"
         align="center"
         label="企业联系人">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="enterprisesName"
         align="center"
         label="企业名">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="enterpriseAbbreviation"
         align="center"
         label="企业简称">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="businessLicence"
         align="center"
         label="营业执照">
+        <template slot-scope="scope">
+          <el-button type="text" size="small">查看</el-button>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="roadTransportLicense"
         align="center"
         label="道路许可证">
+        <template slot-scope="scope">
+          <el-button type="text" size="small">查看</el-button>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="specialPlane"
         align="center"
         label="座机">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="businessAddress"
         align="center"
         label="经营地址">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="createTime"
         align="center"
         label="申请时间">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="auditStatusName"
         align="center"
         label="审核状态">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="auditTime"
         align="center"
         label="审批时间">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="auditor"
         align="center"
         label="审批人">
       </el-table-column>
     </el-table>
+    <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page="formInline.pageIndex + 1"
+            :page-sizes="[10, 20, 50]"
+            :page-size="10"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total">
+    </el-pagination>
   </section>
 </template>
 
@@ -122,17 +141,58 @@
       return {
         formInline: {
           enterprisesName: '',
-          status: ''
+          status: '',
+          pageIndex: 0,
+          pageSize: 10
         },
-        tableData: []
+        total: 0,
+        tableData: [],
+        loading: false
       }
+    },
+    created() {
+      this.getTableData();
     },
     methods: {
       onSubmit() {
-
+        this.formInline.pageIndex = 0;
+        this.formInline.pageSize = 10;
+        this.getTableData();
       },
       reset() {
-
+        this.formInline = {
+          enterprisesName: '',
+          status: '',
+          pageIndex: 0,
+          pageSize: 10
+        }
+      },
+      handleSizeChange(val) {
+        this.formInline.pageSize = val;
+        this.getTableData();
+      },
+      handleCurrentChange(val) {
+        this.formInline.pageIndex = val - 1;
+        this.getTableData();
+      },
+      dataToFrom() {
+        let serach = '';
+        for (let key in this.formInline) {
+          serach += key + '=' + this.formInline[key] + '&'
+        }
+        return serach + 't=' + Math.random();
+      },
+      getTableData() {
+        let searh = this.dataToFrom();
+        this.loading = true;
+        this.$axios('/api/user/logisticsenterprises/auditapply/list', {
+          method: 'post',
+          data: searh
+        }).then(res => {
+          this.tableData = res.data.data.result.resultList;
+          this.total = res.data.data.result.total;
+          this.loading = false;
+        });
       }
     }
   }
@@ -155,5 +215,10 @@
 
   .el-table {
     margin-top: 20px;
+  }
+
+  .el-pagination {
+    padding: 5px;
+    background: #fff;
   }
 </style>
